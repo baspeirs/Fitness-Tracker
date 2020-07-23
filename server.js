@@ -5,8 +5,6 @@ const path = require("path")
 
 const PORT = process.env.PORT || 3000;
 
-const db = require("./models");
-
 const app = express();
 
 app.use(logger("dev"));
@@ -16,16 +14,10 @@ app.use(express.json());
 
 app.use(express.static("public"));
 
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/populatedb", { useNewUrlParser: true });
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", { useNewUrlParser: true });
 
-db.Workout.create({ name: "Workout Tracker" })
-    .then(dbWorkout => {
-        console.log(dbWorkout)
-    })
-
-require("./routes/api-routes")(app);
-require("./routes/html-routes")(app);
-// require("./seeders/seed")(app);
+app.use(require("./routes/api-routes"));
+app.use(require("./routes/html-routes"));
 
 app.listen(PORT, () => {
     console.log(`App running on port ${PORT}!`);

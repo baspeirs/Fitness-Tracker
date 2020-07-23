@@ -1,29 +1,47 @@
-const db = require("../models");
+const Workout = require("../models/Workout");
+const router = require("express").Router();
 
-module.exports = function (app) {
-    // ==== This section is to CONTINUE WORKOUTS =====
+router.get("/api/workouts", (req, res) => {
+    Workout.find({})
+        .then((dbWorkout) => {
+            res.json(dbWorkout)
+        })
+        .catch(err => {
+            res.json(err);
+        });
+});
 
+router.post("/api/workouts", ({ body }, res) => {
+    console.log(body)
+    Workout.create(body)
+        .then(dbWorkout => {
+            res.json(dbWorkout);
+        })
+        .catch(err => {
+            res.json(err);
+        });
+});
 
-    // ==== this section is for NEW WORKOUTS =====
-    app.get("/api/workouts", (req, res) => {
-        db.Workout.find({})
-            .then((dbWorkout) => {
-                res.json(dbWorkout)
-            })
-            .catch(err => {
-                res.json(err);
-            });
-    });
-
-    app.post("/api/workouts", ({ body }, res) => {
-        console.log(body)
-        db.Exercise.create(body)
-            .then(({ _id }) => db.Workout.findOneAndUpdate({}))
-            .then(dbWorkout => {
-                res.json(dbWorkout);
-            })
-            .catch(err => {
-                res.json(err);
-            });
+router.put("/api/workouts/:id", (req, res) => {
+    const { id } = req.params;
+    const { body } = req;
+    Workout.update(
+        { _id: id },
+        { $push: { exercises: body } }
+    ).then(dbWorkout => {
+        res.json(dbWorkout)
     })
-}
+    .catch(err => res.json(err));
+});
+
+router.get("/api/workouts/range", (req, res) => {
+    Workout.find({})
+    .then((dbWorkout) => {
+        res.json(dbWorkout)
+    })
+    .catch(err => {
+        res.json(err);
+    });
+});
+
+module.exports = router
