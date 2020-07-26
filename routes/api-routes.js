@@ -37,6 +37,7 @@ router.put("/api/workouts/:id", (req, res) => {
 router.get("/api/workouts/range", (req, res) => {
     Workout.find({})
     .then((dbWorkout) => {
+        console.log(dbWorkout[0].day)
         res.json(dbWorkout)
     })
     .catch(err => {
